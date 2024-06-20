@@ -25,4 +25,40 @@ export class MessageService {
 
     return run;
   }
+
+  async getAllByThread(threadId: string) {
+    const threadMessages = await openai.beta.threads.messages.list(threadId);
+
+    return threadMessages;
+  }
+
+  async getById(messageId: string, threadId: string) {
+    const message = await openai.beta.threads.messages.retrieve(
+      threadId,
+      messageId,
+    );
+
+    return message;
+  }
+
+  async update(messageId: string, threadId: string, metadata: any) {
+    const message = await openai.beta.threads.messages.update(
+      threadId,
+      messageId,
+      {
+        metadata,
+      },
+    );
+
+    return message;
+  }
+
+  async delete(messageId: string, threadId: string) {
+    const deletedMessage = await openai.beta.threads.messages.del(
+      threadId,
+      messageId,
+    );
+
+    return deletedMessage;
+  }
 }

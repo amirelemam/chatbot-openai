@@ -8,34 +8,34 @@ export class AssistantController {
   constructor(private readonly assistantService: AssistantService) {}
 
   @Post('assistants')
-  createAssistant(): Promise<OpenAI.Beta.Assistants.Assistant> {
-    return this.assistantService.createAssistant();
+  create(): Promise<OpenAI.Beta.Assistants.Assistant> {
+    return this.assistantService.create();
   }
 
   @Get('assistants')
-  listAssistants(
+  get(
     @Query() assistant?: AssistantDTO,
   ): Promise<
     OpenAI.Beta.Assistants.Assistant | OpenAI.Beta.Assistants.AssistantsPage
   > {
     if (assistant.id) {
-      return this.assistantService.listAssistantById(assistant.id);
+      return this.assistantService.getById(assistant.id);
     } else {
-      return this.assistantService.listAssistants();
+      return this.assistantService.getAll();
     }
   }
 
   @Patch('assistants')
-  updateAssistant(
+  update(
     @Query() assistant: AssistantDTO,
   ): Promise<OpenAI.Beta.Assistants.Assistant> {
-    return this.assistantService.updateAssistant(assistant.id);
+    return this.assistantService.update(assistant.id);
   }
 
   @Delete('assistants')
-  deleteAssistant(
+  delete(
     @Query() assistant: AssistantDTO,
   ): Promise<OpenAI.Beta.Assistants.AssistantDeleted> {
-    return this.assistantService.deleteAssistant(assistant.id);
+    return this.assistantService.delete(assistant.id);
   }
 }

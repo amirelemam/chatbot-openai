@@ -8,7 +8,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 @Injectable()
 export class AssistantService {
-  async createAssistant(): Promise<OpenAI.Beta.Assistants.Assistant> {
+  async create(): Promise<OpenAI.Beta.Assistants.Assistant> {
     const assistant = await openai.beta.assistants.create({
       name: 'Support Chatbot',
       instructions:
@@ -20,13 +20,13 @@ export class AssistantService {
     return assistant;
   }
 
-  async listAssistants(): Promise<OpenAI.Beta.Assistants.AssistantsPage> {
+  async getAll(): Promise<OpenAI.Beta.Assistants.AssistantsPage> {
     const assistants = await openai.beta.assistants.list();
 
     return assistants;
   }
 
-  async listAssistantById(
+  async getById(
     assistantId: string,
   ): Promise<OpenAI.Beta.Assistants.Assistant> {
     const assistant = await openai.beta.assistants.retrieve(assistantId);
@@ -34,7 +34,7 @@ export class AssistantService {
     return assistant;
   }
 
-  async deleteAssistant(
+  async delete(
     assistantId: string,
   ): Promise<OpenAI.Beta.Assistants.AssistantDeleted> {
     const assistant = await openai.beta.assistants.del(assistantId);
@@ -42,7 +42,7 @@ export class AssistantService {
     return assistant;
   }
 
-  async updateAssistant(assistantId: string) {
+  async update(assistantId: string) {
     const assistant = await openai.beta.assistants.update(assistantId, {
       model: 'gpt-4-turbo',
     });
