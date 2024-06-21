@@ -24,6 +24,20 @@ export class VectorStoreService {
     return vectorStore;
   }
 
+  async createFile(
+    vectorStoreId: string,
+    fileId: string,
+  ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFile> {
+    const vectorStoreFile = await openai.beta.vectorStores.files.create(
+      vectorStoreId,
+      {
+        file_id: fileId,
+      },
+    );
+
+    return vectorStoreFile;
+  }
+
   async get(): Promise<OpenAI.Beta.VectorStores.VectorStoresPage> {
     const vectorStores = await openai.beta.vectorStores.list();
 
@@ -36,6 +50,27 @@ export class VectorStoreService {
     const vectorStore = await openai.beta.vectorStores.retrieve(vectorStoreId);
 
     return vectorStore;
+  }
+
+  async getFiles(
+    vectorStoreId: string,
+  ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFilesPage> {
+    const vectorStoreFiles =
+      await openai.beta.vectorStores.files.list(vectorStoreId);
+
+    return vectorStoreFiles;
+  }
+
+  async getFile(
+    vectorStoreId: string,
+    fileId: string,
+  ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFile> {
+    const vectorStoreFile = await openai.beta.vectorStores.files.retrieve(
+      vectorStoreId,
+      fileId,
+    );
+
+    return vectorStoreFile;
   }
 
   async update(vectorStoreId: string, name: string) {
@@ -51,5 +86,17 @@ export class VectorStoreService {
       await openai.beta.vectorStores.del(vectorStoreId);
 
     return deletedVectorStore;
+  }
+
+  async deleteFile(
+    vectorStoreId: string,
+    fileId: string,
+  ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFileDeleted> {
+    const deletedVectorStoreFile = await openai.beta.vectorStores.files.del(
+      vectorStoreId,
+      fileId,
+    );
+
+    return deletedVectorStoreFile;
   }
 }
