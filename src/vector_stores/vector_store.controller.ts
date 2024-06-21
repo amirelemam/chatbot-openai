@@ -33,6 +33,17 @@ export class VectorStoreController {
     );
   }
 
+  @Post('vector-stores/:vectorStoreId/file_batches')
+  createFileBatch(
+    @Body() body: any,
+    @Param() params: any,
+  ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFile[]> {
+    return this.vectorStoreService.createFileBatch(
+      params.vectorStoreId,
+      body.fileIds,
+    );
+  }
+
   @Get('vector-stores/:vectorStoreId/files')
   getFiles(
     @Param() params: any,
@@ -45,6 +56,26 @@ export class VectorStoreController {
     @Param() params: any,
   ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFile> {
     return this.vectorStoreService.getFile(params.vectorStoreId, params.fileId);
+  }
+
+  @Get('vector-stores/:vectorStoreId/file_batches/:fileBatchId/files')
+  getFileBatch(
+    @Param() params: any,
+  ): Promise<OpenAI.Beta.VectorStores.FileBatches.VectorStoreFileBatch> {
+    return this.vectorStoreService.getFileBatch(
+      params.vectorStoreId,
+      params.batchId,
+    );
+  }
+
+  @Get('vector-stores/:vectorStoreId/file_batches/:fileBatchId/files')
+  getFilesInBatch(
+    @Param() params: any,
+  ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFilesPage> {
+    return this.vectorStoreService.getFilesInBatch(
+      params.vectorStoreId,
+      params.batchId,
+    );
   }
 
   @Get('vector-stores')
@@ -79,6 +110,16 @@ export class VectorStoreController {
     return this.vectorStoreService.deleteFile(
       params.vectorStoreId,
       params.fileId,
+    );
+  }
+
+  @Delete('vector-stores/:vectorStoreId/file_batches/:fileBatchId/cancel')
+  deleteFileBatch(
+    @Param() params: any,
+  ): Promise<OpenAI.Beta.VectorStores.FileBatches.VectorStoreFileBatch> {
+    return this.vectorStoreService.cancelFileBatch(
+      params.vectorStoreId,
+      params.batchId,
     );
   }
 }

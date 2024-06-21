@@ -38,6 +38,21 @@ export class VectorStoreService {
     return vectorStoreFile;
   }
 
+  async createFileBatch(
+    vectorStoreId: string,
+    fileIds: string[],
+  ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFile[]> {
+    const vectorStoreFiles = await Promise.all(
+      fileIds.map((fileId) =>
+        openai.beta.vectorStores.files.create(vectorStoreId, {
+          file_id: fileId,
+        }),
+      ),
+    );
+
+    return vectorStoreFiles;
+  }
+
   async get(): Promise<OpenAI.Beta.VectorStores.VectorStoresPage> {
     const vectorStores = await openai.beta.vectorStores.list();
 
@@ -73,6 +88,19 @@ export class VectorStoreService {
     return vectorStoreFile;
   }
 
+  async getFileBatch(
+    vectorStoreId: string,
+    batchId: string,
+  ): Promise<OpenAI.Beta.VectorStores.FileBatches.VectorStoreFileBatch> {
+    const vectorStoreFileBatch =
+      await openai.beta.vectorStores.fileBatches.retrieve(
+        vectorStoreId,
+        batchId,
+      );
+
+    return vectorStoreFileBatch;
+  }
+
   async update(vectorStoreId: string, name: string) {
     const vectorStore = await openai.beta.vectorStores.update(vectorStoreId, {
       name,
@@ -98,5 +126,27 @@ export class VectorStoreService {
     );
 
     return deletedVectorStoreFile;
+  }
+
+  async cancelFileBatch(
+    vectorStoreId: string,
+    batchId: string,
+  ): Promise<OpenAI.Beta.VectorStores.FileBatches.VectorStoreFileBatch> {
+    const deletedVectorStoreFileBatch =
+      await openai.beta.vectorStores.fileBatches.cancel(vectorStoreId, batchId);
+    return deletedVectorStoreFileBatch;
+  }
+
+  async getFilesInBatch(
+    vectorStoreId: string,
+    batchId: string,
+  ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFilesPage> {
+    const vectorStoreFiles =
+      await openai.beta.vectorStores.fileBatches.listFiles(
+        vectorStoreId,
+        batchId,
+      );
+
+    return vectorStoreFiles;
   }
 }
