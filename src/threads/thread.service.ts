@@ -38,6 +38,7 @@ export class ThreadService {
       throw new HttpException({ message: error.message }, error.status);
     }
   }
+
   async createRun(
     threadId: string,
     assistantId: string,
@@ -59,6 +60,25 @@ export class ThreadService {
     }
   }
 
+  async getRuns(threadId: string): Promise<OpenAI.Beta.Threads.Runs.RunsPage> {
+    try {
+      return await openai.beta.threads.runs.list(threadId);
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
+  }
+
+  async getRunById(
+    threadId: string,
+    runId: string,
+  ): Promise<OpenAI.Beta.Threads.Runs.Run> {
+    try {
+      return await openai.beta.threads.runs.retrieve(threadId, runId);
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
+  }
+
   async getRunSteps(
     threadId: string,
     runId: string,
@@ -70,7 +90,7 @@ export class ThreadService {
     }
   }
 
-  async getRunStep(
+  async getRunStepById(
     threadId: string,
     runId: string,
     stepId: string,
@@ -119,25 +139,6 @@ export class ThreadService {
   ): Promise<OpenAI.Beta.Threads.Runs.Run> {
     try {
       return await openai.beta.threads.runs.cancel(threadId, runId);
-    } catch (error: any) {
-      throw new HttpException({ message: error.message }, error.status);
-    }
-  }
-
-  async getRuns(threadId: string): Promise<OpenAI.Beta.Threads.Runs.RunsPage> {
-    try {
-      return await openai.beta.threads.runs.list(threadId);
-    } catch (error: any) {
-      throw new HttpException({ message: error.message }, error.status);
-    }
-  }
-
-  async getRun(
-    threadId: string,
-    runId: string,
-  ): Promise<OpenAI.Beta.Threads.Runs.Run> {
-    try {
-      return await openai.beta.threads.runs.retrieve(threadId, runId);
     } catch (error: any) {
       throw new HttpException({ message: error.message }, error.status);
     }

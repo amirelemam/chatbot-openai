@@ -45,17 +45,14 @@ export class ThreadController {
     return this.threadService.createAndRun(assistantId, messages);
   }
 
-  @Get('threads')
-  get(@Query() thread: any): Promise<OpenAI.Beta.Threads.Thread> | object {
-    if (thread.id) {
-      return this.threadService.getById(thread.id);
-    }
-    return {};
+  @Get('threads/:threadId')
+  get(@Param() params: any): Promise<OpenAI.Beta.Threads.Thread> | object {
+    return this.threadService.getById(params.threadId);
   }
 
   @Get('threads/:threadId/runs/:runId')
-  getRun(@Param() params: any): Promise<OpenAI.Beta.Threads.Runs.Run> {
-    return this.threadService.getRun(params.threadId, params.runId);
+  getRunById(@Param() params: any): Promise<OpenAI.Beta.Threads.Runs.Run> {
+    return this.threadService.getRunById(params.threadId, params.runId);
   }
 
   @Get('threads/:threadId/runs')
@@ -63,16 +60,18 @@ export class ThreadController {
     return this.threadService.getRuns(params.threadId);
   }
 
-  @Get('threads/{thread_id}/runs/{run_id}/steps')
+  @Get('threads/:threadId/runs/:runId/steps')
   getRunSteps(
     @Param() params: any,
   ): Promise<OpenAI.Beta.Threads.Runs.RunStepsPage> {
     return this.threadService.getRunSteps(params.threadId, params.runId);
   }
 
-  @Get('threads/{thread_id}/runs/{run_id}/steps/:stepId')
-  getRunStep(@Param() params: any): Promise<OpenAI.Beta.Threads.Runs.RunStep> {
-    return this.threadService.getRunStep(
+  @Get('threads/:threadId/runs/:runId/steps/:stepId')
+  getRunStepById(
+    @Param() params: any,
+  ): Promise<OpenAI.Beta.Threads.Runs.RunStep> {
+    return this.threadService.getRunStepById(
       params.threadId,
       params.runId,
       params.stepId,
