@@ -23,7 +23,7 @@ export type QueryStringDTO = {
 
 export type RunDTO = {
   id?: string;
-  threadId: string;
+  threadId?: string;
   assistantId: string;
   model?: string;
   instructions?: string | null;

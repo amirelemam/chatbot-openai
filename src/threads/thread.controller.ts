@@ -20,14 +20,18 @@ export class ThreadController {
     return this.threadService.create();
   }
 
-  @Post('runs')
-  createRun(@Body() body: RunDTO): Promise<OpenAI.Beta.Threads.Runs.Run> {
-    const { threadId, assistantId } = body;
+  @Post('threads/:threadId/runs')
+  createRun(
+    @Param() params: any,
+    @Body() body: RunDTO,
+  ): Promise<OpenAI.Beta.Threads.Runs.Run> {
+    const { assistantId } = body;
+    const { threadId } = params;
     return this.threadService.createRun(threadId, assistantId);
   }
 
   @Post('threads/runs')
-  createAndRun(
+  createThreadAndRun(
     @Body() threadWithMessages: ThreadWithMessagesDTO,
   ): Promise<OpenAI.Beta.Threads.Runs.Run> {
     const { assistantId, messages } = threadWithMessages;

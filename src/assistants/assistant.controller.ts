@@ -1,7 +1,15 @@
-import { Controller, Delete, Get, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { AssistantService } from './assistant.service';
 import OpenAI from 'openai';
-import { AssistantDTO } from './assistant.type';
+import { AssistantDTO, UpdateDTO } from './assistant.type';
 
 @Controller()
 export class AssistantController {
@@ -26,10 +34,8 @@ export class AssistantController {
   }
 
   @Patch('assistants')
-  update(
-    @Query() assistant: AssistantDTO,
-  ): Promise<OpenAI.Beta.Assistants.Assistant> {
-    return this.assistantService.update(assistant.id);
+  update(@Body() body: UpdateDTO): Promise<OpenAI.Beta.Assistants.Assistant> {
+    return this.assistantService.update(body.id, body);
   }
 
   @Delete('assistants')

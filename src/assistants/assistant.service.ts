@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
 import * as dotenv from 'dotenv';
+import { UpdateDTO } from './assistant.type';
 
 dotenv.config();
 
@@ -42,9 +43,30 @@ export class AssistantService {
     return assistant;
   }
 
-  async update(assistantId: string) {
+  async update(
+    assistantId: string,
+    body: UpdateDTO,
+  ): Promise<OpenAI.Beta.Assistants.Assistant> {
+    const {
+      model = 'gpt-4o',
+      name = null,
+      description = '',
+      instructions = '',
+      tools = [],
+      toolResources = null,
+      temperature = null,
+      topP = null,
+    } = body;
+
     const assistant = await openai.beta.assistants.update(assistantId, {
-      model: 'gpt-4-turbo',
+      model,
+      name,
+      description,
+      instructions,
+      tools,
+      tool_resources: toolResources,
+      temperature,
+      top_p: topP,
     });
 
     return assistant;
