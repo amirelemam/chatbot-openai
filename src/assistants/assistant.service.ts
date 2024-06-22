@@ -31,9 +31,6 @@ export class AssistantService {
       temperature,
       top_p: topP,
     });
-    // const assistant = await openai.beta.assistants.create({
-
-    // });
 
     return assistant;
   }

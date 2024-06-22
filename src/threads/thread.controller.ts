@@ -22,7 +22,9 @@ export class ThreadController {
 
   @Post('threads')
   create(@Body() thread: CreateThreadDTO): Promise<OpenAI.Beta.Threads.Thread> {
-    return this.threadService.create(thread);
+    const { messages = [], toolResources = null } = thread;
+
+    return this.threadService.create(messages, toolResources);
   }
 
   @Post('threads/:threadId/runs')
@@ -44,10 +46,11 @@ export class ThreadController {
   }
 
   @Get('threads')
-  get(@Query() threadId: string): Promise<OpenAI.Beta.Threads.Thread> {
-    if (threadId) {
-      return this.threadService.getById(threadId);
+  get(@Query() thread: any): Promise<OpenAI.Beta.Threads.Thread> | object {
+    if (thread.id) {
+      return this.threadService.getById(thread.id);
     }
+    return {};
   }
 
   @Get('threads/:threadId/runs/:runId')
