@@ -9,15 +9,20 @@ import {
 } from '@nestjs/common';
 import { ThreadService } from './thread.service';
 import OpenAI from 'openai';
-import { ThreadDTO, ThreadWithMessagesDTO, RunDTO } from './thread.type';
+import {
+  CreateThreadDTO,
+  UpdateThreadDTO,
+  ThreadWithMessagesDTO,
+  RunDTO,
+} from './thread.type';
 
 @Controller()
 export class ThreadController {
   constructor(private readonly threadService: ThreadService) {}
 
   @Post('threads')
-  create(): Promise<OpenAI.Beta.Threads.Thread> {
-    return this.threadService.create();
+  create(@Body() thread: CreateThreadDTO): Promise<OpenAI.Beta.Threads.Thread> {
+    return this.threadService.create(thread);
   }
 
   @Post('threads/:threadId/runs')
@@ -39,9 +44,9 @@ export class ThreadController {
   }
 
   @Get('threads')
-  get(@Query() thread: ThreadDTO): Promise<OpenAI.Beta.Threads.Thread> {
-    if (thread.id) {
-      return this.threadService.getById(thread.id);
+  get(@Query() threadId: string): Promise<OpenAI.Beta.Threads.Thread> {
+    if (threadId) {
+      return this.threadService.getById(threadId);
     }
   }
 
@@ -72,7 +77,9 @@ export class ThreadController {
   }
 
   @Post('threads')
-  update(@Query() thread: ThreadDTO): Promise<OpenAI.Beta.Threads.Thread> {
+  update(
+    @Query() thread: UpdateThreadDTO,
+  ): Promise<OpenAI.Beta.Threads.Thread> {
     return this.threadService.update(thread.id);
   }
 
@@ -90,9 +97,9 @@ export class ThreadController {
 
   @Delete('threads')
   delete(
-    @Query() thread: ThreadDTO,
+    @Query() threadId: string,
   ): Promise<OpenAI.Beta.Threads.ThreadDeleted> {
-    return this.threadService.delete(thread.id);
+    return this.threadService.delete(threadId);
   }
 
   @Delete('threads/:threadId/runs/:runId')

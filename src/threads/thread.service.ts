@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
 import * as dotenv from 'dotenv';
-import { MessageDTO } from './thread.type';
+import { CreateThreadDTO, MessageDTO } from './thread.type';
 
 dotenv.config();
 
@@ -9,8 +9,13 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 @Injectable()
 export class ThreadService {
-  async create(): Promise<OpenAI.Beta.Threads.Thread> {
-    const emptyThread = await openai.beta.threads.create();
+  async create(thread: CreateThreadDTO): Promise<OpenAI.Beta.Threads.Thread> {
+    const { messages = [], toolResources = null } = thread;
+
+    const emptyThread = await openai.beta.threads.create({
+      messages,
+      tool_resources: toolResources,
+    });
 
     return emptyThread;
   }

@@ -1,7 +1,17 @@
-type Role = 'user' | 'assistant';
+import OpenAI from 'openai';
 
-export type ThreadDTO = {
+type Role = 'user' | 'assistant';
+type ToolResources = OpenAI.Beta.Assistants.AssistantUpdateParams.ToolResources;
+
+export type CreateThreadDTO = {
+  messages?: MessageDTO[];
+  toolResources?: ToolResources;
+};
+
+export type UpdateThreadDTO = {
   id: string;
+  messages?: MessageDTO[];
+  toolResources?: ToolResources[];
 };
 
 export type MessageDTO = {
