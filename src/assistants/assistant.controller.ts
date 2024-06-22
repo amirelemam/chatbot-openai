@@ -9,15 +9,15 @@ import {
 } from '@nestjs/common';
 import { AssistantService } from './assistant.service';
 import OpenAI from 'openai';
-import { AssistantDTO, UpdateDTO } from './assistant.type';
+import { AssistantDTO, CreateDTO, UpdateDTO } from './assistant.type';
 
 @Controller()
 export class AssistantController {
   constructor(private readonly assistantService: AssistantService) {}
 
   @Post('assistants')
-  create(): Promise<OpenAI.Beta.Assistants.Assistant> {
-    return this.assistantService.create();
+  create(@Body() body: CreateDTO): Promise<OpenAI.Beta.Assistants.Assistant> {
+    return this.assistantService.create(body);
   }
 
   @Get('assistants')

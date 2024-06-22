@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
 import * as dotenv from 'dotenv';
-import { UpdateDTO } from './assistant.type';
+import { CreateDTO, UpdateDTO } from './assistant.type';
 
 dotenv.config();
 
@@ -9,14 +9,31 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 @Injectable()
 export class AssistantService {
-  async create(): Promise<OpenAI.Beta.Assistants.Assistant> {
+  async create(body: CreateDTO): Promise<OpenAI.Beta.Assistants.Assistant> {
+    const {
+      model,
+      name = null,
+      description = '',
+      instructions = '',
+      tools = [],
+      toolResources = null,
+      temperature = null,
+      topP = null,
+    } = body;
+
     const assistant = await openai.beta.assistants.create({
-      name: 'Support Chatbot',
-      instructions:
-        'You take care of the customer requests and recomemnds steps to solve the issue.',
-      model: 'gpt-4o',
-      tools: [{ type: 'file_search' }],
+      model,
+      name,
+      description,
+      instructions,
+      tools,
+      tool_resources: toolResources,
+      temperature,
+      top_p: topP,
     });
+    // const assistant = await openai.beta.assistants.create({
+
+    // });
 
     return assistant;
   }

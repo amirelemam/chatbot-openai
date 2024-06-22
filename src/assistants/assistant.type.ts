@@ -8,9 +8,20 @@ export type AssistantDTO = {
   id: string;
 };
 
+export type CreateDTO = {
+  model: string;
+  name?: string;
+  description?: string;
+  instructions?: string;
+  tools?: AssistantTools[];
+  toolResources?: ToolResources;
+  temperature?: number;
+  topP?: number;
+};
+
 export type UpdateDTO = {
   id: string;
-  model: string;
+  model?: string;
   name?: string;
   description?: string;
   instructions?: string;
