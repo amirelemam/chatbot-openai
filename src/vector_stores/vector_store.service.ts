@@ -1,152 +1,166 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
+import { openai } from '../openai';
 import OpenAI from 'openai';
-import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-
-dotenv.config();
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 @Injectable()
 export class VectorStoreService {
   async create(): Promise<OpenAI.Beta.VectorStores.VectorStore> {
-    // const embedding = await openai.embeddings.create({
-    const file = await openai.files.create({
-      file: fs.createReadStream('./src/faq.json'),
-      purpose: 'assistants',
-    });
+    try {
+      const file = await openai.files.create({
+        file: fs.createReadStream('./src/faq.json'),
+        purpose: 'assistants',
+      });
 
-    const vectorStore = await openai.beta.vectorStores.create({
-      name: 'Support FAQ',
-      file_ids: [file.id],
-    });
-
-    return vectorStore;
+      return await openai.beta.vectorStores.create({
+        name: 'Support FAQ',
+        file_ids: [file.id],
+      });
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async createFile(
     vectorStoreId: string,
     fileId: string,
   ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFile> {
-    const vectorStoreFile = await openai.beta.vectorStores.files.create(
-      vectorStoreId,
-      {
+    try {
+      return await openai.beta.vectorStores.files.create(vectorStoreId, {
         file_id: fileId,
-      },
-    );
-
-    return vectorStoreFile;
+      });
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async createFileBatch(
     vectorStoreId: string,
     fileIds: string[],
   ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFile[]> {
-    const vectorStoreFiles = await Promise.all(
-      fileIds.map((fileId) =>
-        openai.beta.vectorStores.files.create(vectorStoreId, {
-          file_id: fileId,
-        }),
-      ),
-    );
-
-    return vectorStoreFiles;
+    try {
+      return await Promise.all(
+        fileIds.map((fileId) =>
+          openai.beta.vectorStores.files.create(vectorStoreId, {
+            file_id: fileId,
+          }),
+        ),
+      );
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async get(): Promise<OpenAI.Beta.VectorStores.VectorStoresPage> {
-    const vectorStores = await openai.beta.vectorStores.list();
-
-    return vectorStores;
+    try {
+      return await openai.beta.vectorStores.list();
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async getById(
     vectorStoreId: string,
   ): Promise<OpenAI.Beta.VectorStores.VectorStore> {
-    const vectorStore = await openai.beta.vectorStores.retrieve(vectorStoreId);
-
-    return vectorStore;
+    try {
+      return await openai.beta.vectorStores.retrieve(vectorStoreId);
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async getFiles(
     vectorStoreId: string,
   ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFilesPage> {
-    const vectorStoreFiles =
-      await openai.beta.vectorStores.files.list(vectorStoreId);
-
-    return vectorStoreFiles;
+    try {
+      return await openai.beta.vectorStores.files.list(vectorStoreId);
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async getFile(
     vectorStoreId: string,
     fileId: string,
   ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFile> {
-    const vectorStoreFile = await openai.beta.vectorStores.files.retrieve(
-      vectorStoreId,
-      fileId,
-    );
-
-    return vectorStoreFile;
+    try {
+      return await openai.beta.vectorStores.files.retrieve(
+        vectorStoreId,
+        fileId,
+      );
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async getFileBatch(
     vectorStoreId: string,
     batchId: string,
   ): Promise<OpenAI.Beta.VectorStores.FileBatches.VectorStoreFileBatch> {
-    const vectorStoreFileBatch =
-      await openai.beta.vectorStores.fileBatches.retrieve(
+    try {
+      return await openai.beta.vectorStores.fileBatches.retrieve(
         vectorStoreId,
         batchId,
       );
-
-    return vectorStoreFileBatch;
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async update(vectorStoreId: string, name: string) {
-    const vectorStore = await openai.beta.vectorStores.update(vectorStoreId, {
-      name,
-    });
-
-    return vectorStore;
+    try {
+      return await openai.beta.vectorStores.update(vectorStoreId, {
+        name,
+      });
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async delete(vectorStoreId: string) {
-    const deletedVectorStore =
-      await openai.beta.vectorStores.del(vectorStoreId);
-
-    return deletedVectorStore;
+    try {
+      return await openai.beta.vectorStores.del(vectorStoreId);
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async deleteFile(
     vectorStoreId: string,
     fileId: string,
   ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFileDeleted> {
-    const deletedVectorStoreFile = await openai.beta.vectorStores.files.del(
-      vectorStoreId,
-      fileId,
-    );
-
-    return deletedVectorStoreFile;
+    try {
+      return await openai.beta.vectorStores.files.del(vectorStoreId, fileId);
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async cancelFileBatch(
     vectorStoreId: string,
     batchId: string,
   ): Promise<OpenAI.Beta.VectorStores.FileBatches.VectorStoreFileBatch> {
-    const deletedVectorStoreFileBatch =
-      await openai.beta.vectorStores.fileBatches.cancel(vectorStoreId, batchId);
-    return deletedVectorStoreFileBatch;
+    try {
+      return await openai.beta.vectorStores.fileBatches.cancel(
+        vectorStoreId,
+        batchId,
+      );
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async getFilesInBatch(
     vectorStoreId: string,
     batchId: string,
   ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFilesPage> {
-    const vectorStoreFiles =
-      await openai.beta.vectorStores.fileBatches.listFiles(
+    try {
+      return await openai.beta.vectorStores.fileBatches.listFiles(
         vectorStoreId,
         batchId,
       );
-
-    return vectorStoreFiles;
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 }

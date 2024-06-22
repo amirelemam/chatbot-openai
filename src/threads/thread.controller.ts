@@ -78,11 +78,14 @@ export class ThreadController {
     );
   }
 
-  @Post('threads')
+  @Post('threads/:threadId')
   update(
-    @Query() thread: UpdateThreadDTO,
+    @Body() body: UpdateThreadDTO,
+    @Param() params: any,
   ): Promise<OpenAI.Beta.Threads.Thread> {
-    return this.threadService.update(thread.id);
+    const { threadId } = params;
+    const { toolResources = null } = body;
+    return this.threadService.update(threadId, toolResources);
   }
 
   @Post('threads/:threadId/runs/:runId')

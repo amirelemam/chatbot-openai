@@ -8,13 +8,11 @@ export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 
   @Post('messages')
-  create(@Body() body: MessageDTO): Promise<OpenAI.Beta.Threads.Runs.Run> {
-    const { threadId, content, assistantId } = body;
-    return this.messageService.addMessageToThread(
-      threadId,
-      content,
-      assistantId,
-    );
+  create(
+    @Body() body: MessageDTO,
+  ): Promise<OpenAI.Beta.Threads.Messages.Message> {
+    const { threadId, content } = body;
+    return this.messageService.addMessageToThread(threadId, content);
   }
 
   @Get('messages')

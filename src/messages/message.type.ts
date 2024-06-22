@@ -2,7 +2,6 @@ export type MessageDTO = {
   id?: string;
   threadId: string;
   content?: string;
-  assistantId?: string;
 };
 
 export type NewMessageDTO = {

@@ -1,11 +1,7 @@
 import { Injectable, HttpException } from '@nestjs/common';
 import OpenAI from 'openai';
-import * as dotenv from 'dotenv';
+import { openai } from '../openai';
 import { MessageDTO } from './thread.type';
-
-dotenv.config();
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 @Injectable()
 export class ThreadService {
@@ -106,13 +102,19 @@ export class ThreadService {
     }
   }
 
-  async update(threadId: string): Promise<OpenAI.Beta.Threads.Thread> {
+  async update(
+    threadId: string,
+    toolResources: OpenAI.Beta.Assistants.AssistantUpdateParams.ToolResources,
+  ): Promise<OpenAI.Beta.Threads.Thread> {
     try {
-      return await openai.beta.threads.retrieve(threadId);
+      return await openai.beta.threads.update(threadId, {
+        tool_resources: toolResources,
+      });
     } catch (error: any) {
       throw new HttpException({ message: error.message }, error.status);
     }
   }
+
   async updateRun(
     threadId: string,
     runId: string,

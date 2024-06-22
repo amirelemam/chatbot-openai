@@ -1,88 +1,94 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 import OpenAI from 'openai';
-import * as dotenv from 'dotenv';
+import { openai } from '../openai';
 import { CreateDTO, UpdateDTO } from './assistant.type';
-
-dotenv.config();
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 @Injectable()
 export class AssistantService {
   async create(body: CreateDTO): Promise<OpenAI.Beta.Assistants.Assistant> {
-    const {
-      model,
-      name = null,
-      description = '',
-      instructions = '',
-      tools = [],
-      toolResources = null,
-      temperature = null,
-      topP = null,
-    } = body;
+    try {
+      const {
+        model,
+        name = null,
+        description = '',
+        instructions = '',
+        tools = [],
+        toolResources = null,
+        temperature = null,
+        topP = null,
+      } = body;
 
-    const assistant = await openai.beta.assistants.create({
-      model,
-      name,
-      description,
-      instructions,
-      tools,
-      tool_resources: toolResources,
-      temperature,
-      top_p: topP,
-    });
-
-    return assistant;
+      return await openai.beta.assistants.create({
+        model,
+        name,
+        description,
+        instructions,
+        tools,
+        tool_resources: toolResources,
+        temperature,
+        top_p: topP,
+      });
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async getAll(): Promise<OpenAI.Beta.Assistants.AssistantsPage> {
-    const assistants = await openai.beta.assistants.list();
-
-    return assistants;
+    try {
+      return await openai.beta.assistants.list();
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async getById(
     assistantId: string,
   ): Promise<OpenAI.Beta.Assistants.Assistant> {
-    const assistant = await openai.beta.assistants.retrieve(assistantId);
-
-    return assistant;
+    try {
+      return await openai.beta.assistants.retrieve(assistantId);
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async delete(
     assistantId: string,
   ): Promise<OpenAI.Beta.Assistants.AssistantDeleted> {
-    const assistant = await openai.beta.assistants.del(assistantId);
-
-    return assistant;
+    try {
+      return await openai.beta.assistants.del(assistantId);
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async update(
     assistantId: string,
     body: UpdateDTO,
   ): Promise<OpenAI.Beta.Assistants.Assistant> {
-    const {
-      model = 'gpt-4o',
-      name = null,
-      description = '',
-      instructions = '',
-      tools = [],
-      toolResources = null,
-      temperature = null,
-      topP = null,
-    } = body;
+    try {
+      const {
+        model = 'gpt-4o',
+        name = null,
+        description = '',
+        instructions = '',
+        tools = [],
+        toolResources = null,
+        temperature = null,
+        topP = null,
+      } = body;
 
-    const assistant = await openai.beta.assistants.update(assistantId, {
-      model,
-      name,
-      description,
-      instructions,
-      tools,
-      tool_resources: toolResources,
-      temperature,
-      top_p: topP,
-    });
-
-    return assistant;
+      return await openai.beta.assistants.update(assistantId, {
+        model,
+        name,
+        description,
+        instructions,
+        tools,
+        tool_resources: toolResources,
+        temperature,
+        top_p: topP,
+      });
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 }

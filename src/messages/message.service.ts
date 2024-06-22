@@ -1,64 +1,53 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 import OpenAI from 'openai';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
+import { openai } from '../openai';
 @Injectable()
 export class MessageService {
   async addMessageToThread(
     threadId: string,
     content: string,
-    assistantId: string,
-  ): Promise<OpenAI.Beta.Threads.Runs.Run> {
-    const message = await openai.beta.threads.messages.create(threadId, {
-      role: 'user',
-      content,
-    });
-    console.log({ message });
-
-    const run = await openai.beta.threads.runs.create(threadId, {
-      assistant_id: assistantId,
-    });
-
-    return run;
+  ): Promise<OpenAI.Beta.Threads.Messages.Message> {
+    try {
+      return await openai.beta.threads.messages.create(threadId, {
+        role: 'user',
+        content,
+      });
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async getAllByThread(threadId: string) {
-    const threadMessages = await openai.beta.threads.messages.list(threadId);
-
-    return threadMessages;
+    try {
+      return await openai.beta.threads.messages.list(threadId);
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async getById(messageId: string, threadId: string) {
-    const message = await openai.beta.threads.messages.retrieve(
-      threadId,
-      messageId,
-    );
-
-    return message;
+    try {
+      return await openai.beta.threads.messages.retrieve(threadId, messageId);
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async update(messageId: string, threadId: string, metadata: any) {
-    const message = await openai.beta.threads.messages.update(
-      threadId,
-      messageId,
-      {
+    try {
+      return await openai.beta.threads.messages.update(threadId, messageId, {
         metadata,
-      },
-    );
-
-    return message;
+      });
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 
   async delete(messageId: string, threadId: string) {
-    const deletedMessage = await openai.beta.threads.messages.del(
-      threadId,
-      messageId,
-    );
-
-    return deletedMessage;
+    try {
+      return await openai.beta.threads.messages.del(threadId, messageId);
+    } catch (error: any) {
+      throw new HttpException({ message: error.message }, error.status);
+    }
   }
 }

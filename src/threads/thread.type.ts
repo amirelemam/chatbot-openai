@@ -9,9 +9,7 @@ export type CreateThreadDTO = {
 };
 
 export type UpdateThreadDTO = {
-  id: string;
-  messages?: MessageDTO[];
-  toolResources?: ToolResources[];
+  toolResources?: ToolResources;
 };
 
 export type MessageDTO = {
