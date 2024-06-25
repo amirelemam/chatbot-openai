@@ -1,7 +1,7 @@
 import { Injectable, HttpException } from '@nestjs/common';
 import OpenAI from 'openai';
 import { openai } from '../openai';
-import { MessageDTO } from './thread.type';
+import { MessageDTO, RunDTO } from './thread.type';
 
 @Injectable()
 export class ThreadService {
@@ -118,7 +118,7 @@ export class ThreadService {
   async updateRun(
     threadId: string,
     runId: string,
-    body: any,
+    body: RunDTO,
   ): Promise<OpenAI.Beta.Threads.Runs.Run> {
     try {
       return await openai.beta.threads.runs.update(threadId, runId, body);

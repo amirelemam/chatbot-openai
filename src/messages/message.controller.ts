@@ -32,11 +32,7 @@ export class MessageController {
   update(
     @Body() newMessage: NewMessageDTO,
   ): Promise<OpenAI.Beta.Threads.Messages.Message> {
-    return this.messageService.update(
-      newMessage.messageId,
-      newMessage.threadId,
-      newMessage.metadata,
-    );
+    return this.messageService.update(newMessage);
   }
 
   @Delete('messages')

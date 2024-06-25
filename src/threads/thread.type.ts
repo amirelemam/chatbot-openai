@@ -38,7 +38,10 @@ export type RunDTO = {
   additionalInstructions?: string | null;
   additionalMessages?: string[] | null;
   tools?: string[] | null;
-  metadata?: any;
+  metadata?: {
+    modified: string;
+    user: string;
+  };
   temperature?: number | null;
   top_p?: number | null;
   stream?: boolean | null;
@@ -48,4 +51,16 @@ export type RunDTO = {
   toolChoice?: string | object;
   parallelToolCalls?: boolean | null;
   response_format?: string | object;
+};
+
+export type ThreadParams = {
+  threadId: string;
+};
+
+export type RunParams = {
+  runId: string;
+};
+
+export type StepParams = {
+  stepId: string;
 };

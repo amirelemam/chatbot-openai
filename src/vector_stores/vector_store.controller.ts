@@ -11,6 +11,12 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import OpenAI from 'openai';
+import {
+  VectorStoreFileParams,
+  VectorStoreParams,
+  VectorStoreFileBatchParams,
+  VectorStoreDTO,
+} from './vector_store.type';
 
 @Controller()
 export class VectorStoreController {
@@ -24,19 +30,19 @@ export class VectorStoreController {
 
   @Post('vector-stores/:vectorStoreId/files')
   createFile(
-    @Body() body: any,
-    @Param() params: any,
+    @Body() body: VectorStoreDTO,
+    @Param() params: VectorStoreParams,
   ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFile> {
     return this.vectorStoreService.createFile(
       params.vectorStoreId,
-      body.fileId,
+      body.fileIds[0],
     );
   }
 
   @Post('vector-stores/:vectorStoreId/file_batches')
   createFileBatch(
-    @Body() body: any,
-    @Param() params: any,
+    @Body() body: VectorStoreDTO,
+    @Param() params: VectorStoreParams,
   ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFile[]> {
     return this.vectorStoreService.createFileBatch(
       params.vectorStoreId,
@@ -46,21 +52,21 @@ export class VectorStoreController {
 
   @Get('vector-stores/:vectorStoreId/files')
   getFiles(
-    @Param() params: any,
+    @Param() params: VectorStoreParams,
   ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFilesPage> {
     return this.vectorStoreService.getFiles(params.vectorStoreId);
   }
 
   @Get('vector-stores/:vectorStoreId/files/:fileId')
   getFile(
-    @Param() params: any,
+    @Param() params: VectorStoreParams & VectorStoreFileParams,
   ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFile> {
     return this.vectorStoreService.getFile(params.vectorStoreId, params.fileId);
   }
 
   @Get('vector-stores/:vectorStoreId/file_batches/:fileBatchId/files')
   getFileBatch(
-    @Param() params: any,
+    @Param() params: VectorStoreParams & VectorStoreFileBatchParams,
   ): Promise<OpenAI.Beta.VectorStores.FileBatches.VectorStoreFileBatch> {
     return this.vectorStoreService.getFileBatch(
       params.vectorStoreId,
@@ -70,7 +76,7 @@ export class VectorStoreController {
 
   @Get('vector-stores/:vectorStoreId/file_batches/:fileBatchId/files')
   getFilesInBatch(
-    @Param() params: any,
+    @Param() params: VectorStoreParams & VectorStoreFileBatchParams,
   ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFilesPage> {
     return this.vectorStoreService.getFilesInBatch(
       params.vectorStoreId,
@@ -84,28 +90,30 @@ export class VectorStoreController {
   }
 
   @Get('vector-stores/:vectorStoreId')
-  getById(@Param() params: any): Promise<OpenAI.Beta.VectorStores.VectorStore> {
+  getById(
+    @Param() params: VectorStoreParams,
+  ): Promise<OpenAI.Beta.VectorStores.VectorStore> {
     return this.vectorStoreService.getById(params.vectorStoreId);
   }
 
   @Patch('vector-stores/:vectorStoreId')
   update(
-    @Body() body: any,
-    @Param() params: any,
+    @Body() body: VectorStoreDTO,
+    @Param() params: VectorStoreParams,
   ): Promise<OpenAI.Beta.VectorStores.VectorStore> {
     return this.vectorStoreService.update(params.vectorStoreId, body.name);
   }
 
   @Delete('vector-stores/:vectorStoreId')
   delete(
-    @Param() params: any,
+    @Param() params: VectorStoreParams,
   ): Promise<OpenAI.Beta.VectorStores.VectorStoreDeleted> {
     return this.vectorStoreService.delete(params.vectorStoreId);
   }
 
   @Delete('vector-stores/:vectorStoreId/files/:fileId')
   deleteFile(
-    @Param() params: any,
+    @Param() params: VectorStoreParams & VectorStoreFileParams,
   ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFileDeleted> {
     return this.vectorStoreService.deleteFile(
       params.vectorStoreId,
@@ -115,7 +123,7 @@ export class VectorStoreController {
 
   @Delete('vector-stores/:vectorStoreId/file_batches/:fileBatchId/cancel')
   deleteFileBatch(
-    @Param() params: any,
+    @Param() params: VectorStoreParams & VectorStoreFileBatchParams,
   ): Promise<OpenAI.Beta.VectorStores.FileBatches.VectorStoreFileBatch> {
     return this.vectorStoreService.cancelFileBatch(
       params.vectorStoreId,

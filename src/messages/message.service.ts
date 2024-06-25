@@ -1,6 +1,7 @@
 import { Injectable, HttpException } from '@nestjs/common';
 import OpenAI from 'openai';
 import { openai } from '../openai';
+import { NewMessageDTO } from './message.type';
 @Injectable()
 export class MessageService {
   async addMessageToThread(
@@ -33,8 +34,9 @@ export class MessageService {
     }
   }
 
-  async update(messageId: string, threadId: string, metadata: any) {
+  async update(body: NewMessageDTO) {
     try {
+      const { messageId, threadId, metadata } = body;
       return await openai.beta.threads.messages.update(threadId, messageId, {
         metadata,
       });

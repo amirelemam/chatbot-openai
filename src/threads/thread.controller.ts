@@ -6,6 +6,7 @@ import {
   Query,
   Body,
   Param,
+  Patch,
 } from '@nestjs/common';
 import { ThreadService } from './thread.service';
 import OpenAI from 'openai';
@@ -14,6 +15,9 @@ import {
   UpdateThreadDTO,
   ThreadWithMessagesDTO,
   RunDTO,
+  ThreadParams,
+  RunParams,
+  StepParams,
 } from './thread.type';
 
 @Controller()
@@ -29,7 +33,7 @@ export class ThreadController {
 
   @Post('threads/:threadId/runs')
   createRun(
-    @Param() params: any,
+    @Param() params: ThreadParams,
     @Body() body: RunDTO,
   ): Promise<OpenAI.Beta.Threads.Runs.Run> {
     const { assistantId } = body;
@@ -46,30 +50,36 @@ export class ThreadController {
   }
 
   @Get('threads/:threadId')
-  get(@Param() params: any): Promise<OpenAI.Beta.Threads.Thread> | object {
+  get(
+    @Param() params: ThreadParams,
+  ): Promise<OpenAI.Beta.Threads.Thread> | object {
     return this.threadService.getById(params.threadId);
   }
 
   @Get('threads/:threadId/runs/:runId')
-  getRunById(@Param() params: any): Promise<OpenAI.Beta.Threads.Runs.Run> {
+  getRunById(
+    @Param() params: ThreadParams & RunParams,
+  ): Promise<OpenAI.Beta.Threads.Runs.Run> {
     return this.threadService.getRunById(params.threadId, params.runId);
   }
 
   @Get('threads/:threadId/runs')
-  getRuns(@Param() params: any): Promise<OpenAI.Beta.Threads.Runs.RunsPage> {
+  getRuns(
+    @Param() params: ThreadParams,
+  ): Promise<OpenAI.Beta.Threads.Runs.RunsPage> {
     return this.threadService.getRuns(params.threadId);
   }
 
   @Get('threads/:threadId/runs/:runId/steps')
   getRunSteps(
-    @Param() params: any,
+    @Param() params: ThreadParams & RunParams,
   ): Promise<OpenAI.Beta.Threads.Runs.RunStepsPage> {
     return this.threadService.getRunSteps(params.threadId, params.runId);
   }
 
   @Get('threads/:threadId/runs/:runId/steps/:stepId')
   getRunStepById(
-    @Param() params: any,
+    @Param() params: ThreadParams & RunParams & StepParams,
   ): Promise<OpenAI.Beta.Threads.Runs.RunStep> {
     return this.threadService.getRunStepById(
       params.threadId,
@@ -78,26 +88,22 @@ export class ThreadController {
     );
   }
 
-  @Post('threads/:threadId')
+  @Patch('threads/:threadId')
   update(
     @Body() body: UpdateThreadDTO,
-    @Param() params: any,
+    @Param() params: ThreadParams,
   ): Promise<OpenAI.Beta.Threads.Thread> {
     const { threadId } = params;
     const { toolResources = null } = body;
     return this.threadService.update(threadId, toolResources);
   }
 
-  @Post('threads/:threadId/runs/:runId')
+  @Patch('threads/:threadId/runs/:runId')
   updateRun(
-    @Param() params: any,
+    @Param() params: ThreadParams & RunParams,
     @Body() body: RunDTO,
   ): Promise<OpenAI.Beta.Threads.Runs.Run> {
-    return this.threadService.updateRun(
-      params.threadId,
-      params.runId,
-      body.metadata,
-    );
+    return this.threadService.updateRun(params.threadId, params.runId, body);
   }
 
   @Delete('threads')
@@ -108,7 +114,9 @@ export class ThreadController {
   }
 
   @Delete('threads/:threadId/runs/:runId')
-  cancelRun(@Param() params: any): Promise<OpenAI.Beta.Threads.Runs.Run> {
+  cancelRun(
+    @Param() params: ThreadParams & RunParams,
+  ): Promise<OpenAI.Beta.Threads.Runs.Run> {
     return this.threadService.cancelRun(params.threadId, params.runId);
   }
 }
