@@ -17,15 +17,15 @@ export class MessageController {
 
   @Get('messages')
   get(
-    @Query() message: MessageDTO,
+    @Query() query: MessageDTO,
   ): Promise<
     | OpenAI.Beta.Threads.Messages.MessagesPage
     | OpenAI.Beta.Threads.Messages.Message
   > {
-    if (message.id) {
-      return this.messageService.getById(message.id, message.threadId);
+    if (query.id) {
+      return this.messageService.getById(query.id, query.threadId);
     }
-    return this.messageService.getAllByThread(message.threadId);
+    return this.messageService.getAllByThread(query.threadId);
   }
 
   @Post('messages')
@@ -37,8 +37,8 @@ export class MessageController {
 
   @Delete('messages')
   delete(
-    @Query() message: MessageDTO,
+    @Query() query: MessageDTO,
   ): Promise<OpenAI.Beta.Threads.Messages.MessageDeleted> {
-    return this.messageService.delete(message.id, message.threadId);
+    return this.messageService.delete(query.id, query.threadId);
   }
 }

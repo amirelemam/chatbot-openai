@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Delete,
-  Query,
   Body,
   Param,
   Patch,
@@ -106,11 +105,11 @@ export class ThreadController {
     return this.threadService.updateRun(params.threadId, params.runId, body);
   }
 
-  @Delete('threads')
+  @Delete('threads/:threadId')
   delete(
-    @Query() threadId: string,
+    @Param() params: ThreadParams,
   ): Promise<OpenAI.Beta.Threads.ThreadDeleted> {
-    return this.threadService.delete(threadId);
+    return this.threadService.delete(params.threadId);
   }
 
   @Delete('threads/:threadId/runs/:runId')

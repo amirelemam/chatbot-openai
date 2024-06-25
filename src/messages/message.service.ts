@@ -34,6 +34,7 @@ export class MessageService {
     }
   }
 
+  // não testado
   async update(body: NewMessageDTO) {
     try {
       const { messageId, threadId, metadata } = body;
