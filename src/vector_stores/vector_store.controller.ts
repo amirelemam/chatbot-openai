@@ -8,80 +8,26 @@ import {
   Param,
   Body,
   Delete,
+  UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import OpenAI from 'openai';
 import {
   VectorStoreFileParams,
   VectorStoreParams,
-  VectorStoreFileBatchParams,
   VectorStoreDTO,
 } from './vector_store.type';
+import multerConfig from './multer-config';
 
 @Controller()
 export class VectorStoreController {
   constructor(private readonly vectorStoreService: VectorStoreService) {}
 
   @Post('vector-stores')
-  @UseInterceptors(FileInterceptor('file'))
-  uploadFile(): Promise<OpenAI.Beta.VectorStores.VectorStore> {
-    return this.vectorStoreService.create();
-  }
-
-  @Post('vector-stores/:vectorStoreId/files')
-  createFile(
+  create(
     @Body() body: VectorStoreDTO,
-    @Param() params: VectorStoreParams,
-  ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFile> {
-    return this.vectorStoreService.createFile(
-      params.vectorStoreId,
-      body.fileIds[0],
-    );
-  }
-
-  @Post('vector-stores/:vectorStoreId/file_batches')
-  createFileBatch(
-    @Body() body: VectorStoreDTO,
-    @Param() params: VectorStoreParams,
-  ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFile[]> {
-    return this.vectorStoreService.createFileBatch(
-      params.vectorStoreId,
-      body.fileIds,
-    );
-  }
-
-  @Get('vector-stores/:vectorStoreId/files')
-  getFiles(
-    @Param() params: VectorStoreParams,
-  ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFilesPage> {
-    return this.vectorStoreService.getFiles(params.vectorStoreId);
-  }
-
-  @Get('vector-stores/:vectorStoreId/files/:fileId')
-  getFile(
-    @Param() params: VectorStoreParams & VectorStoreFileParams,
-  ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFile> {
-    return this.vectorStoreService.getFile(params.vectorStoreId, params.fileId);
-  }
-
-  @Get('vector-stores/:vectorStoreId/file_batches/:fileBatchId/files')
-  getFileBatch(
-    @Param() params: VectorStoreParams & VectorStoreFileBatchParams,
-  ): Promise<OpenAI.Beta.VectorStores.FileBatches.VectorStoreFileBatch> {
-    return this.vectorStoreService.getFileBatch(
-      params.vectorStoreId,
-      params.batchId,
-    );
-  }
-
-  @Get('vector-stores/:vectorStoreId/file_batches/:fileBatchId/files')
-  getFilesInBatch(
-    @Param() params: VectorStoreParams & VectorStoreFileBatchParams,
-  ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFilesPage> {
-    return this.vectorStoreService.getFilesInBatch(
-      params.vectorStoreId,
-      params.batchId,
-    );
+  ): Promise<OpenAI.Beta.VectorStores.VectorStore> {
+    return this.vectorStoreService.create(body.fileIds, body.name);
   }
 
   @Get('vector-stores')
@@ -111,6 +57,32 @@ export class VectorStoreController {
     return this.vectorStoreService.delete(params.vectorStoreId);
   }
 
+  @Post('vector-stores/:vectorStoreId/upload-files')
+  @UseInterceptors(FileInterceptor('file', multerConfig))
+  uploadFileToVectorStore(
+    @Param() params: VectorStoreParams,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFile> {
+    return this.vectorStoreService.uploadFileToVectorStore(
+      params.vectorStoreId,
+      file,
+    );
+  }
+
+  @Get('vector-stores/:vectorStoreId/files')
+  getFiles(
+    @Param() params: VectorStoreParams,
+  ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFilesPage> {
+    return this.vectorStoreService.getFiles(params.vectorStoreId);
+  }
+
+  @Get('vector-stores/:vectorStoreId/files/:fileId')
+  getFile(
+    @Param() params: VectorStoreParams & VectorStoreFileParams,
+  ): Promise<OpenAI.Beta.VectorStores.Files.VectorStoreFile> {
+    return this.vectorStoreService.getFile(params.vectorStoreId, params.fileId);
+  }
+
   @Delete('vector-stores/:vectorStoreId/files/:fileId')
   deleteFile(
     @Param() params: VectorStoreParams & VectorStoreFileParams,
@@ -118,16 +90,6 @@ export class VectorStoreController {
     return this.vectorStoreService.deleteFile(
       params.vectorStoreId,
       params.fileId,
-    );
-  }
-
-  @Delete('vector-stores/:vectorStoreId/file_batches/:fileBatchId/cancel')
-  deleteFileBatch(
-    @Param() params: VectorStoreParams & VectorStoreFileBatchParams,
-  ): Promise<OpenAI.Beta.VectorStores.FileBatches.VectorStoreFileBatch> {
-    return this.vectorStoreService.cancelFileBatch(
-      params.vectorStoreId,
-      params.batchId,
     );
   }
 }
